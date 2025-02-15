@@ -1,8 +1,11 @@
+import { Button } from "./components/ui/button";
+
 function App() {
 	return (
 		<>
-			<div>
-				<h1>ERP Frontend</h1>
+			<div className="flex flex-col justify-center items-center min-h-screen">
+				<h1 className="text-xl">ERP Frontend</h1>
+				<Button>Submit</Button>
 			</div>
 		</>
 	);
