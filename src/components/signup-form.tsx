@@ -2,11 +2,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
-import { useId } from "react";
+import { MouseEvent, useId, useState } from "react";
 import { Card, CardContent, CardHeader } from "./ui/card";
 
 export default function SignupForm() {
 	const id = useId();
+
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
+	async function handleSignup(
+		e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
+	): Promise<void> {
+		e.preventDefault();
+
+		const username = email.split("@")[0];
+		const firstName = name.split(" ")[0];
+		const lastName = name.split(" ")[1];
+
+		await fetch("http://localhost:8000/api/signup/", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				username,
+				email,
+				password,
+				firstName,
+				lastName,
+			}),
+		});
+	}
+
 	return (
 		<div className="flex flex-col gap-6">
 			<Card>
@@ -33,6 +63,7 @@ export default function SignupForm() {
 									id={`${id}-name`}
 									placeholder="Dhruv Anand"
 									type="text"
+									onChange={(e) => setName(e.target.value)}
 									required
 								/>
 							</div>
@@ -43,6 +74,7 @@ export default function SignupForm() {
 									placeholder="hi@iiitn.ac.in"
 									type="email"
 									required
+									onChange={(e) => setEmail(e.target.value)}
 								/>
 							</div>
 							<div className="space-y-2">
@@ -51,11 +83,15 @@ export default function SignupForm() {
 									id={`${id}-password`}
 									placeholder="Enter your password"
 									type="password"
+									onChange={(e) => setPassword(e.target.value)}
 									required
 								/>
 							</div>
 						</div>
-						<Button type="button" className="w-full">
+						<Button
+							type="button"
+							className="w-full"
+							onClick={(e) => handleSignup(e)}>
 							Sign up
 						</Button>
 						<div className="text-center text-sm">
