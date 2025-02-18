@@ -86,7 +86,7 @@ export default function SignupForm() {
 								/>
 							</div>
 						</div>
-						<Button type="button" className="w-full">
+						<Button type="submit" className="w-full">
 							Sign up
 						</Button>
 						<div className="text-center text-sm">
