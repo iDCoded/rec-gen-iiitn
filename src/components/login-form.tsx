@@ -9,11 +9,39 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { useState } from "react";
 
 export function LoginForm({
 	className,
 	...props
 }: React.ComponentPropsWithoutRef<"div">) {
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+
+	async function handleLogin(
+		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+	): Promise<void> {
+		e.preventDefault();
+
+		const username = email.split("@")[0]; // Store the enrollment ID (before @) as the username
+
+		await fetch("http://localhost:8000/api/login/", {
+			method: "POST",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				username,
+				email,
+				password,
+			}),
+		});
+
+		// TODO: Add alert messages
+		// const data = await res.json();
+	}
+
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
@@ -31,6 +59,7 @@ export function LoginForm({
 										id="email"
 										type="email"
 										placeholder="m@example.com"
+										onChange={(e) => setEmail(e.target.value)}
 										required
 									/>
 								</div>
@@ -43,9 +72,18 @@ export function LoginForm({
 											Forgot your password?
 										</a> */}
 									</div>
-									<Input id="password" type="password" required />
+									<Input
+										id="password"
+										type="password"
+										placeholder="Enter your password"
+										onChange={(e) => setPassword(e.target.value)}
+										required
+									/>
 								</div>
-								<Button type="submit" className="w-full">
+								<Button
+									type="submit"
+									className="w-full"
+									onClick={(e) => handleLogin(e)}>
 									Login
 								</Button>
 							</div>
