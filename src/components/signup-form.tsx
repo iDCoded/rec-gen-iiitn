@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
-import { MouseEvent, useId, useState } from "react";
+import { useId, useState } from "react";
 import { Card, CardContent, CardHeader } from "./ui/card";
 
 export default function SignupForm() {
@@ -12,9 +12,7 @@ export default function SignupForm() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	async function handleSignup(
-		e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-	): Promise<void> {
+	async function handleSignup(e: React.FormEvent): Promise<void> {
 		e.preventDefault();
 
 		const username = email.split("@")[0];
@@ -55,7 +53,7 @@ export default function SignupForm() {
 				</CardHeader>
 
 				<CardContent>
-					<form className="space-y-5">
+					<form className="space-y-5" onSubmit={handleSignup}>
 						<div className="space-y-4">
 							<div className="space-y-2">
 								<Label htmlFor={`${id}-name`}>Full name</Label>
@@ -88,10 +86,7 @@ export default function SignupForm() {
 								/>
 							</div>
 						</div>
-						<Button
-							type="button"
-							className="w-full"
-							onClick={(e) => handleSignup(e)}>
+						<Button type="button" className="w-full">
 							Sign up
 						</Button>
 						<div className="text-center text-sm">

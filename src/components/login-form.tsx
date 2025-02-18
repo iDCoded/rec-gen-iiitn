@@ -18,9 +18,7 @@ export function LoginForm({
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 
-	async function handleLogin(
-		e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-	): Promise<void> {
+	async function handleLogin(e: React.FormEvent): Promise<void> {
 		e.preventDefault();
 
 		const username = email.split("@")[0]; // Store the enrollment ID (before @) as the username
@@ -50,7 +48,7 @@ export function LoginForm({
 					<CardDescription>Login with your email</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form>
+					<form onSubmit={handleLogin}>
 						<div className="grid gap-6">
 							<div className="grid gap-6">
 								<div className="grid gap-2">
@@ -80,10 +78,7 @@ export function LoginForm({
 										required
 									/>
 								</div>
-								<Button
-									type="submit"
-									className="w-full"
-									onClick={(e) => handleLogin(e)}>
+								<Button type="submit" className="w-full">
 									Login
 								</Button>
 							</div>
