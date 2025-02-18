@@ -1,10 +1,10 @@
-import LoginPage from "./app/login/page";
+import SignupPage from "./app/signup/page";
 
 function App() {
 	return (
 		<>
 			<div className="flex flex-col justify-center items-center min-h-screen">
-				<LoginPage />
+				<SignupPage />
 			</div>
 		</>
 	);
