@@ -58,6 +58,12 @@ export default function SignupForm() {
 						<Button type="button" className="w-full">
 							Sign up
 						</Button>
+						<div className="text-center text-sm">
+							Already have an account?{" "}
+							<a href="/login" className="underline underline-offset-4">
+								Login
+							</a>
+						</div>
 					</form>
 				</CardContent>
 
