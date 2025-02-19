@@ -23,20 +23,28 @@ export function LoginForm({
 	const {
 		register,
 		handleSubmit,
+		setError,
 		formState: { errors, isSubmitting },
 	} = useForm<FormFields>();
 
-	const onSubmit: SubmitHandler<FormFields> = async (data) => {
-		await fetch("http://localhost:8000/api/login/", {
+	const onSubmit: SubmitHandler<FormFields> = async (formData) => {
+		const res = await fetch("http://localhost:8000/api/login/", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				email: data.email,
-				password: data.password,
+				email: formData.email,
+				password: formData.password,
 			}),
 		});
+		const data = await res.json();
+
+		if (res.ok) {
+			localStorage.setItem("token", data.token);
+		} else {
+			setError("root", { message: data.detail });
+		}
 	};
 
 	return (
@@ -95,6 +103,11 @@ export function LoginForm({
 									className="w-full">
 									Login
 								</Button>
+								{errors.root && (
+									<div className="text-red-600 text-xs">
+										{errors.root.message}
+									</div>
+								)}
 							</div>
 							<div className="text-center text-sm">
 								Don&apos;t have an account?{" "}
