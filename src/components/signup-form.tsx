@@ -17,25 +17,36 @@ export default function SignupForm() {
 	const {
 		register,
 		handleSubmit,
+		setError,
 		formState: { errors, isSubmitting },
 	} = useForm<FormFields>();
 
-	const onSubmit: SubmitHandler<FormFields> = async (data) => {
-		const firstName = data.name.split(" ")[0];
-		const lastName = data.name.split(" ")[1];
-		await fetch("http://localhost:8000/api/signup/", {
+	const onSubmit: SubmitHandler<FormFields> = async (formData) => {
+		const firstName = formData.name.split(" ")[0];
+		const lastName = formData.name.split(" ")[1];
+		const res = await fetch("http://localhost:8000/api/signup/", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				username: data.email.split("@")[0],
-				email: data.email,
-				password: data.password,
+				username: formData.email.split("@")[0],
+				email: formData.email,
+				password: formData.password,
 				firstName: firstName ? firstName : "",
 				lastName: lastName ? lastName : "",
 			}),
 		});
+		const data = await res.json();
+
+		if (res.ok) {
+			localStorage.setItem("token", data.token);
+		} else {
+			// setError("root", { message: data.detail });
+			// ? Send detailed error message from the backend
+			// ? if user already exists with the given email.
+			setError("root", { message: res.statusText });
+		}
 	};
 
 	return (
@@ -110,6 +121,9 @@ export default function SignupForm() {
 						<Button type="submit" disabled={isSubmitting} className="w-full">
 							{isSubmitting ? "Loading..." : "Submit"}
 						</Button>
+						{errors.root && (
+							<div className="text-red-600 text-xs">{errors.root.message}</div>
+						)}
 						<div className="text-center text-sm">
 							Already have an account?{" "}
 							<a href="/login" className="underline underline-offset-4">
