@@ -9,36 +9,35 @@ import {
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type FormFields = {
+	email: string;
+	password: string;
+};
 
 export function LoginForm({
 	className,
 	...props
 }: React.ComponentPropsWithoutRef<"div">) {
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<FormFields>();
 
-	async function handleLogin(e: React.FormEvent): Promise<void> {
-		e.preventDefault();
-
-		const username = email.split("@")[0]; // Store the enrollment ID (before @) as the username
-
+	const onSubmit: SubmitHandler<FormFields> = async (data) => {
 		await fetch("http://localhost:8000/api/login/", {
 			method: "POST",
 			headers: {
-				Accept: "application/json",
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				username,
-				email,
-				password,
+				email: data.email,
+				password: data.password,
 			}),
 		});
-
-		// TODO: Add alert messages
-		// const data = await res.json();
-	}
+	};
 
 	return (
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -48,18 +47,24 @@ export function LoginForm({
 					<CardDescription>Login with your email</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<form onSubmit={handleLogin}>
+					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className="grid gap-6">
 							<div className="grid gap-6">
 								<div className="grid gap-2">
 									<Label htmlFor="email">Email</Label>
 									<Input
 										id="email"
-										type="email"
 										placeholder="m@example.com"
-										onChange={(e) => setEmail(e.target.value)}
-										required
+										{...register("email", {
+											required: "Email is required",
+										})}
+										type="email"
 									/>
+									{errors.email && (
+										<div className="text-red-600 text-xs">
+											{errors.email.message}
+										</div>
+									)}
 								</div>
 								<div className="grid gap-2">
 									<div className="flex items-center">
@@ -72,13 +77,22 @@ export function LoginForm({
 									</div>
 									<Input
 										id="password"
-										type="password"
 										placeholder="Enter your password"
-										onChange={(e) => setPassword(e.target.value)}
-										required
+										{...register("password", {
+											required: "Password is required",
+										})}
+										type="password"
 									/>
+									{errors.password && (
+										<div className="text-red-600 text-xs">
+											{errors.password.message}
+										</div>
+									)}
 								</div>
-								<Button type="submit" className="w-full">
+								<Button
+									disabled={isSubmitting}
+									type="submit"
+									className="w-full">
 									Login
 								</Button>
 							</div>
