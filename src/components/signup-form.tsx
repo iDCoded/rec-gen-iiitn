@@ -2,38 +2,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Building2 } from "lucide-react";
-import { useId, useState } from "react";
+import { useId } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader } from "./ui/card";
+
+type FormFields = {
+	name: string;
+	email: string;
+	password: string;
+};
 
 export default function SignupForm() {
 	const id = useId();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<FormFields>();
 
-	const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-
-	async function handleSignup(e: React.FormEvent): Promise<void> {
-		e.preventDefault();
-
-		const username = email.split("@")[0];
-		const firstName = name.split(" ")[0];
-		const lastName = name.split(" ")[1];
-
+	const onSubmit: SubmitHandler<FormFields> = async (data) => {
+		const firstName = data.name.split(" ")[0];
+		const lastName = data.name.split(" ")[1];
 		await fetch("http://localhost:8000/api/signup/", {
 			method: "POST",
 			headers: {
-				Accept: "application/json",
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				username,
-				email,
-				password,
-				firstName,
-				lastName,
+				username: data.email.split("@")[0],
+				email: data.email,
+				password: data.password,
+				firstName: firstName ? firstName : "",
+				lastName: lastName ? lastName : "",
 			}),
 		});
-	}
+	};
 
 	return (
 		<div className="flex flex-col gap-6">
@@ -53,41 +56,59 @@ export default function SignupForm() {
 				</CardHeader>
 
 				<CardContent>
-					<form className="space-y-5" onSubmit={handleSignup}>
+					<form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
 						<div className="space-y-4">
 							<div className="space-y-2">
 								<Label htmlFor={`${id}-name`}>Full name</Label>
 								<Input
 									id={`${id}-name`}
 									placeholder="Dhruv Anand"
+									{...register("name", { required: "Name is required" })}
 									type="text"
-									onChange={(e) => setName(e.target.value)}
-									required
 								/>
+								{errors.name && (
+									<div className="text-red-600 text-xs">
+										{errors.name.message}
+									</div>
+								)}
 							</div>
 							<div className="space-y-2">
 								<Label htmlFor={`${id}-email`}>Email</Label>
 								<Input
 									id={`${id}-email`}
 									placeholder="hi@iiitn.ac.in"
+									{...register("email", { required: "Email is required" })}
 									type="email"
-									required
-									onChange={(e) => setEmail(e.target.value)}
 								/>
+								{errors.email && (
+									<div className="text-red-600 text-xs">
+										{errors.email.message}
+									</div>
+								)}
 							</div>
 							<div className="space-y-2">
 								<Label htmlFor={`${id}-password`}>Password</Label>
 								<Input
 									id={`${id}-password`}
 									placeholder="Enter your password"
+									{...register("password", {
+										required: "Password is required",
+										minLength: {
+											value: 8,
+											message: "Password must have at least 8 characters",
+										},
+									})}
 									type="password"
-									onChange={(e) => setPassword(e.target.value)}
-									required
 								/>
+								{errors.password && (
+									<div className="text-red-600 text-xs">
+										{errors.password.message}
+									</div>
+								)}
 							</div>
 						</div>
-						<Button type="submit" className="w-full">
-							Sign up
+						<Button type="submit" disabled={isSubmitting} className="w-full">
+							{isSubmitting ? "Loading..." : "Submit"}
 						</Button>
 						<div className="text-center text-sm">
 							Already have an account?{" "}
