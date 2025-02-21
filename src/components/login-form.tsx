@@ -10,6 +10,9 @@ import {
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 type FormFields = {
 	email: string;
@@ -27,6 +30,9 @@ export function LoginForm({
 		formState: { errors, isSubmitting },
 	} = useForm<FormFields>();
 
+	const navigate = useNavigate();
+	const { login } = useContext(AuthContext);
+
 	const onSubmit: SubmitHandler<FormFields> = async (formData) => {
 		const res = await fetch("http://localhost:8000/api/login/", {
 			method: "POST",
@@ -41,7 +47,9 @@ export function LoginForm({
 		const data = await res.json();
 
 		if (res.ok) {
-			localStorage.setItem("token", data.token);
+			login(data.token, data.user);
+			// localStorage.setItem("token", data.token);
+			navigate("/");
 		} else {
 			setError("root", { message: data.detail });
 		}
