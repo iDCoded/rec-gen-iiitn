@@ -9,6 +9,8 @@ import DashboardLayout from "./app/dashboard/layout.tsx";
 import AuthProvider from "./context/AuthContext.tsx";
 import NotFound from "./app/notfound/page.tsx";
 import Dashboard from "./app/dashboard/page.tsx";
+import PaymentsTable from "./app/tables/payments/page.tsx";
+import TransactionsTable from "./app/tables/transactions/page.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
@@ -16,6 +18,8 @@ createRoot(document.getElementById("root")!).render(
 			<BrowserRouter>
 				<Routes>
 					<Route path="/" element={<DashboardLayout />}>
+						<Route path="payments" element={<PaymentsTable />} />
+						<Route path="transactions" element={<TransactionsTable />} />
 						<Route index element={<Dashboard />} />
 					</Route>
 					<Route path="/signup" element={<SignupPage />} />
