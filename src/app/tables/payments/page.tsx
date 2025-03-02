@@ -8,7 +8,7 @@ export default function PaymentsTable() {
 	const [error, setError] = useState("");
 
 	useEffect(() => {
-		const fetchCardData = async () => {
+		const fetchPaymentData = async () => {
 			try {
 				const response = await fetch("http://localhost:8000/api/payments");
 				if (!response.ok) throw new Error("Failed to fetch payments data");
@@ -25,7 +25,7 @@ export default function PaymentsTable() {
 			}
 		};
 
-		fetchCardData();
+		fetchPaymentData();
 	}, []);
 
 	if (loading) return <p className="text-center text-gray-500">Loading...</p>;
