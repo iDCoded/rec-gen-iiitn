@@ -11,6 +11,7 @@ import NotFound from "./app/notfound/page.tsx";
 import Dashboard from "./app/dashboard/page.tsx";
 import PaymentsTable from "./app/tables/payments/page.tsx";
 import TransactionsTable from "./app/tables/transactions/page.tsx";
+import PaymentPage from "./app/submit/payment/page.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")!).render(
 						<Route path="payments" element={<PaymentsTable />} />
 						<Route path="transactions" element={<TransactionsTable />} />
 						<Route index element={<Dashboard />} />
+						<Route path="/submit/payment" element={<PaymentPage />} />
 					</Route>
 					<Route path="/signup" element={<SignupPage />} />
 					<Route path="/login" element={<LoginPage />} />

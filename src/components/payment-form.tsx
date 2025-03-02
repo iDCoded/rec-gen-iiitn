@@ -1,0 +1,192 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+
+// Define the form schema with Zod
+const formSchema = z.object({
+	id: z.string().min(1, "ID is required"),
+	amount: z.coerce.number().positive("Amount must be positive"),
+	name: z.string().min(2, "Name must be at least 2 characters"),
+	dateDue: z.date({
+		required_error: "Due date is required",
+	}),
+});
+
+// Infer the type from the schema
+type PaymentFormValues = z.infer<typeof formSchema>;
+
+export default function PaymentForm() {
+	// Default values for the form
+	const defaultValues: Partial<PaymentFormValues> = {
+		id: "",
+		amount: 0,
+		name: "",
+		dateDue: new Date(),
+	};
+
+	// Initialize the form
+	const form = useForm<PaymentFormValues>({
+		resolver: zodResolver(formSchema),
+		defaultValues,
+	});
+
+	// Handle form submission
+	function onSubmit(values: PaymentFormValues) {
+		console.log(values);
+		// Here you would typically send the data to your API
+		alert("Payment submitted successfully!");
+	}
+
+	return (
+		<Card className="w-full max-w-xl mx-auto">
+			<CardHeader>
+				<CardTitle>Payment Details</CardTitle>
+				<CardDescription>Enter the details for your payment.</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+						<FormField
+							control={form.control}
+							name="id"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Payment ID</FormLabel>
+									<FormControl>
+										<Input placeholder="PAY-123456" {...field} />
+									</FormControl>
+									<FormDescription>
+										Enter a unique identifier for this payment.
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="amount"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Amount</FormLabel>
+									<FormControl>
+										<div className="relative">
+											<span className="absolute left-3 top-1.5">₹</span>
+											<Input
+												type="number"
+												placeholder="0.00"
+												className="pl-7"
+												{...field}
+											/>
+										</div>
+									</FormControl>
+									<FormDescription>
+										Enter the payment amount in INR.
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="name"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Recipient Name</FormLabel>
+									<FormControl>
+										<Input placeholder="John Doe" {...field} />
+									</FormControl>
+									<FormDescription>
+										Enter the name of the payment recipient.
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="dateDue"
+							render={({ field }) => (
+								<FormItem className="flex flex-col">
+									<FormLabel>Due Date</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant={"outline"}
+													className={cn(
+														"w-full pl-3 text-left font-normal",
+														!field.value && "text-muted-foreground"
+													)}>
+													{field.value ? (
+														format(field.value, "PPP")
+													) : (
+														<span>Pick a date</span>
+													)}
+													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent className="w-auto p-0" align="start">
+											<Calendar
+												mode="single"
+												selected={field.value}
+												onSelect={field.onChange}
+												disabled={(date) =>
+													date < new Date(new Date().setHours(0, 0, 0, 0))
+												}
+												initialFocus
+											/>
+										</PopoverContent>
+									</Popover>
+									<FormDescription>
+										Select the date when payment is due.
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<Button type="submit" className="w-full">
+							Submit Payment
+						</Button>
+					</form>
+				</Form>
+			</CardContent>
+			<CardFooter className="flex justify-between text-sm text-muted-foreground">
+				<p>All payments are processed securely</p>
+			</CardFooter>
+		</Card>
+	);
+}
