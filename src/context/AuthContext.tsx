@@ -8,13 +8,6 @@ import {
 	useContext,
 } from "react";
 
-interface User {
-	id: number;
-	first_name: string;
-	last_name: string;
-	email: string;
-}
-
 interface AuthContextType {
 	user: User | null;
 	token: string;
