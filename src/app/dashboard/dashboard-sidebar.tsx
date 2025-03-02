@@ -12,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 
 // TODO: Extract sidebar data to parent layout component
+// TODO: Make Sidebar menu button active based on path
 const DashboardSidebar = ({ user }: { user: User }) => {
 	return (
 		<div>
@@ -31,6 +32,21 @@ const DashboardSidebar = ({ user }: { user: User }) => {
 							<SidebarMenuItem>
 								<SidebarMenuButton asChild>
 									<Link to={"/transactions"}>All Transactions</Link>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+						</SidebarMenu>
+					</SidebarGroup>
+					<SidebarGroup>
+						<SidebarGroupLabel>Forms</SidebarGroupLabel>
+						<SidebarMenu>
+							<SidebarMenuItem>
+								<SidebarMenuButton asChild>
+									<Link to={"/submit/payment"}>Payment Form</Link>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+							<SidebarMenuItem>
+								<SidebarMenuButton asChild>
+									<Link to={"/submit/transaction"}>Transactions Form</Link>
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 						</SidebarMenu>
