@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 
@@ -30,19 +29,11 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-
-// Define the form schema with Zod
-const formSchema = z.object({
-	id: z.string().min(1, "ID is required"),
-	amount: z.coerce.number().positive("Amount must be positive"),
-	name: z.string().min(2, "Name must be at least 2 characters"),
-	dateDue: z.date({
-		required_error: "Due date is required",
-	}),
-});
+import { paymentFormSchema } from "@/schemas/payment-schema";
+import { z } from "zod";
 
 // Infer the type from the schema
-type PaymentFormValues = z.infer<typeof formSchema>;
+type PaymentFormValues = z.infer<typeof paymentFormSchema>;
 
 export default function PaymentForm() {
 	// Default values for the form
@@ -55,7 +46,7 @@ export default function PaymentForm() {
 
 	// Initialize the form
 	const form = useForm<PaymentFormValues>({
-		resolver: zodResolver(formSchema),
+		resolver: zodResolver(paymentFormSchema),
 		defaultValues,
 	});
 
