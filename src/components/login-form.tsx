@@ -11,8 +11,7 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { AuthContext } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 type FormFields = {
 	email: string;
@@ -31,7 +30,7 @@ export function LoginForm({
 	} = useForm<FormFields>();
 
 	const navigate = useNavigate();
-	const { login } = useContext(AuthContext);
+	const { login } = useAuth();
 
 	const onSubmit: SubmitHandler<FormFields> = async (formData) => {
 		const res = await fetch("http://localhost:8000/api/login/", {

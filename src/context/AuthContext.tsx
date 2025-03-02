@@ -1,9 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createContext, useState, useEffect, ReactNode } from "react";
+import {
+	createContext,
+	useState,
+	useEffect,
+	ReactNode,
+	useContext,
+} from "react";
 
 interface User {
-	firstName: string;
+	id: number;
+	first_name: string;
+	last_name: string;
 	email: string;
 }
 
@@ -38,6 +46,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	useEffect(() => {
+		console.log("Updated user:", user);
+	}, [user]); // Logs when user changes
+
 	async function fetchUser() {
 		try {
 			const res = await fetch("http://127.0.0.1:8000/api/validate-token/", {
@@ -46,6 +58,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 			if (!res.ok) throw new Error("Invalid token");
 
 			const data = await res.json();
+			console.log("Received from API:", data);
 			setUser(data);
 		} catch (error) {
 			logout();
@@ -74,3 +87,5 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		</AuthContext.Provider>
 	);
 }
+
+export const useAuth = () => useContext(AuthContext);
