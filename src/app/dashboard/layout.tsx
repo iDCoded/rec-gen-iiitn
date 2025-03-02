@@ -26,11 +26,13 @@ export default function DashboardLayout() {
 
 	return (
 		<SidebarProvider>
-			<DashboardSidebar user={user} />
-			<SidebarTrigger />
-			<main>
-				<Outlet context={{ user }} /> {/* Pass user object as context */}
-			</main>
+			<div className="flex min-h-screen">
+				<DashboardSidebar user={user} />
+				<SidebarTrigger />
+				<div className="flex-1 flex justify-center items-center p-4 w-[80vw]">
+					<Outlet context={{ user }} /> {/* Pass user object as context */}
+				</div>
+			</div>
 		</SidebarProvider>
 	);
 }
