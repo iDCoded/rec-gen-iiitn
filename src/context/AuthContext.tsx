@@ -38,11 +38,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// Separate effect for logging user changes.
-	useEffect(() => {
-		console.log("User in state:", user);
-	}, [user]);
-
 	async function fetchUser() {
 		try {
 			const res = await fetch("http://127.0.0.1:8000/api/validate-token/", {
