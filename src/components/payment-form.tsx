@@ -31,11 +31,14 @@ import {
 import { cn } from "@/lib/utils";
 import { paymentFormSchema } from "@/schemas/payment-schema";
 import { z } from "zod";
+import { useAuth } from "@/context/AuthContext";
 
 // Infer the type from the schema
 type PaymentFormValues = z.infer<typeof paymentFormSchema>;
 
 export default function PaymentForm() {
+	const { token } = useAuth();
+
 	// Default values for the form
 	const defaultValues: Partial<PaymentFormValues> = {
 		id: "",
@@ -51,10 +54,26 @@ export default function PaymentForm() {
 	});
 
 	// Handle form submission
-	function onSubmit(values: PaymentFormValues) {
-		console.log(values);
-		// Here you would typically send the data to your API
-		alert("Payment submitted successfully!");
+	async function onSubmit(values: PaymentFormValues) {
+		try {
+			const res = await fetch("http://localhost:8000/api/submit/payment", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Token ${token}`, // Send user token for authorization
+				},
+				body: JSON.stringify({
+					...values,
+					dateDue: format(new Date(values.dateDue), "yyyy-MM-dd"), // Format the date to yyyy-MM-dd
+				}),
+			});
+
+			const data = await res.json();
+
+			console.log(data);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	return (
