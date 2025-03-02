@@ -16,7 +16,9 @@ const DashboardSidebar = ({ user }: { user: User }) => {
 	return (
 		<div>
 			<Sidebar variant="floating">
-				<SidebarHeader>Payment Dashboard</SidebarHeader>
+				<SidebarHeader className="font-bold text-center bg-secondary">
+					<Link to={"/"}>Payment Dashboard</Link>
+				</SidebarHeader>
 				<SidebarContent>
 					<SidebarGroup>
 						<SidebarGroupLabel>Tables</SidebarGroupLabel>
