@@ -1,5 +1,6 @@
-/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-refresh/only-export-components */
 import {
 	createContext,
 	useState,
@@ -7,71 +8,100 @@ import {
 	ReactNode,
 	useContext,
 } from "react";
+import { jwtDecode } from "jwt-decode";
+
+// Define the User type (adjust based on your API response)
+interface User {
+	token_type: string;
+	exp: number;
+	iat: number;
+	jti: string;
+	user_id: number;
+}
 
 interface AuthContextType {
 	user: User | null;
-	token: string;
+	token: string | null;
 	loading: boolean;
-	login: (_token: string, _userData: User) => void;
+	login: (_accessToken: string, _refreshToken: string) => void;
 	logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
 	user: null,
-	token: "",
+	token: null,
 	loading: true,
-	login: (_token: string, _userData: User) => {},
+	login: (_accessToken: string, _refreshToken: string) => {},
 	logout: () => {},
 });
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
-	const [token, setToken] = useState(localStorage.getItem("token") || "");
+	const [token, setToken] = useState<string | null>(
+		localStorage.getItem("access_token")
+	);
 	const [loading, setLoading] = useState<boolean>(true);
 
-	// Only attempt fetching the user once on mount if a token exists.
+	// On mount, check if the token exists and is still valid
 	useEffect(() => {
-		if (token && !user) {
-			fetchUser();
-		} else {
-			setLoading(false);
+		if (token) {
+			const decoded: any = jwtDecode(token);
+			const currentTime = Date.now() / 1000;
+
+			if (decoded.exp < currentTime) {
+				refreshToken();
+			} else {
+				setUser(decoded);
+			}
 		}
+		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	useEffect(() => {
-		console.log("Updated user:", user);
-	}, [user]); // Logs when user changes
+	// Function to log in the user
+	function login(accessToken: string, refreshToken: string) {
+		localStorage.setItem("access_token", accessToken);
+		localStorage.setItem("refresh_token", refreshToken);
 
-	async function fetchUser() {
-		try {
-			const res = await fetch("http://127.0.0.1:8000/api/validate-token/", {
-				headers: { Authorization: `Token ${token}` },
-			});
-			if (!res.ok) throw new Error("Invalid token");
-
-			const data = await res.json();
-			console.log("Received from API:", data);
-			setUser(data);
-		} catch (error) {
-			logout();
-		} finally {
-			setLoading(false);
-		}
-	}
-
-	function login(token: string, userData: User) {
-		localStorage.setItem("token", token);
-		setToken(token);
-		setUser(userData);
+		const decoded: any = jwtDecode(accessToken);
+		console.log(decoded);
+		setUser(decoded);
+		setToken(accessToken);
 		setLoading(false);
 	}
 
+	// Function to log out the user
 	function logout() {
-		localStorage.removeItem("token");
-		setToken("");
+		localStorage.removeItem("access_token");
+		localStorage.removeItem("refresh_token");
+		setToken(null);
 		setUser(null);
 		setLoading(false);
+	}
+
+	// Function to refresh the JWT token
+	async function refreshToken() {
+		const refreshToken = localStorage.getItem("refresh_token");
+
+		if (!refreshToken) {
+			logout();
+			return;
+		}
+
+		try {
+			const res = await fetch("http://127.0.0.1:8000/api/auth/token/refresh/", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ refresh: refreshToken }),
+			});
+
+			if (!res.ok) throw new Error("Failed to refresh token");
+
+			const data = await res.json();
+			login(data.access, refreshToken);
+		} catch (error) {
+			logout();
+		}
 	}
 
 	return (
