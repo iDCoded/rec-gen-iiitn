@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-refresh/only-export-components */
 import {
@@ -9,15 +8,6 @@ import {
 	useContext,
 } from "react";
 import { jwtDecode } from "jwt-decode";
-
-// Define the User type (adjust based on your API response)
-interface User {
-	token_type: string;
-	exp: number;
-	iat: number;
-	jti: string;
-	user_id: number;
-}
 
 interface AuthContextType {
 	user: User | null;
@@ -42,35 +32,56 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	);
 	const [loading, setLoading] = useState<boolean>(true);
 
-	// On mount, check if the token exists and is still valid
+	// On mount, check if the token exists and is valid
 	useEffect(() => {
 		if (token) {
-			const decoded: any = jwtDecode(token);
+			const decoded: JWTUser = jwtDecode(token);
 			const currentTime = Date.now() / 1000;
 
 			if (decoded.exp < currentTime) {
 				refreshToken();
 			} else {
-				setUser(decoded);
+				fetchUser(token);
 			}
+		} else {
+			setLoading(false);
 		}
-		setLoading(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// Function to log in the user
+	// Fetch user details from /api/auth/user/
+	async function fetchUser(accessToken: string) {
+		try {
+			const res = await fetch(
+				`${import.meta.env.VITE_API_BASE_URL}/api/auth/user/`,
+				{
+					headers: { Authorization: `Bearer ${accessToken}` },
+				}
+			);
+
+			if (!res.ok) throw new Error("Failed to fetch user details");
+
+			const data: User = await res.json();
+			setUser(data);
+		} catch (error) {
+			console.error("Error fetching user:", error);
+			logout();
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	// Login function: Store tokens & fetch user details
 	function login(accessToken: string, refreshToken: string) {
 		localStorage.setItem("access_token", accessToken);
 		localStorage.setItem("refresh_token", refreshToken);
-
-		const decoded: any = jwtDecode(accessToken);
-		console.log(decoded);
-		setUser(decoded);
 		setToken(accessToken);
-		setLoading(false);
+
+		// Fetch user details
+		fetchUser(accessToken);
 	}
 
-	// Function to log out the user
+	// Logout function: Clear tokens & user
 	function logout() {
 		localStorage.removeItem("access_token");
 		localStorage.removeItem("refresh_token");
@@ -79,7 +90,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		setLoading(false);
 	}
 
-	// Function to refresh the JWT token
+	// Refresh token function
 	async function refreshToken() {
 		const refreshToken = localStorage.getItem("refresh_token");
 
@@ -100,6 +111,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 			const data = await res.json();
 			login(data.access, refreshToken);
 		} catch (error) {
+			console.error("Token refresh failed:", error);
 			logout();
 		}
 	}
