@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -29,47 +28,49 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { paymentFormSchema } from "@/schemas/payment-schema";
 import { z } from "zod";
 import { useAuth } from "@/context/AuthContext";
+import { feeSubmissionSchema } from "@/schemas/fee-submission-schema";
 
 // Infer the type from the schema
-type PaymentFormValues = z.infer<typeof paymentFormSchema>;
+type FeeSubmissionValues = z.infer<typeof feeSubmissionSchema>;
 
-export default function PaymentForm() {
-	const { token } = useAuth();
+export default function FeeSubmissionForm() {
+	const { token, user } = useAuth();
 
 	// Default values for the form
-	const defaultValues: Partial<PaymentFormValues> = {
-		id: "",
-		amount: 0,
-		name: "",
-		dateDue: new Date(),
+	const defaultValues: Partial<FeeSubmissionValues> = {
+		total_amount: 0,
+		status: "pending",
+		submitted_at: new Date(),
 	};
 
 	// Initialize the form
-	const form = useForm<PaymentFormValues>({
-		resolver: zodResolver(paymentFormSchema),
+	const form = useForm<FeeSubmissionValues>({
+		resolver: zodResolver(feeSubmissionSchema),
 		defaultValues,
 	});
 
 	// Handle form submission
-	async function onSubmit(values: PaymentFormValues) {
+	async function onSubmit(values: FeeSubmissionValues) {
 		try {
-			const res = await fetch("http://localhost:8000/api/submit/payment", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Authorization: `Token ${token}`, // Send user token for authorization
-				},
-				body: JSON.stringify({
-					...values,
-					dateDue: format(new Date(values.dateDue), "yyyy-MM-dd"), // Format the date to yyyy-MM-dd
-				}),
-			});
+			const res = await fetch(
+				`${import.meta.env.VITE_API_BASE_URL}/api/fee_submissions/`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Token ${token}`,
+					},
+					body: JSON.stringify({
+						...values,
+						submitted_at: format(new Date(values.submitted_at), "yyyy-MM-dd"),
+						student: user?.student_id,
+					}),
+				}
+			);
 
 			const data = await res.json();
-
 			console.log(data);
 		} catch (error) {
 			console.error(error);
@@ -79,35 +80,20 @@ export default function PaymentForm() {
 	return (
 		<Card className="w-full max-w-xl mx-auto">
 			<CardHeader>
-				<CardTitle>Payment Details</CardTitle>
-				<CardDescription>Enter the details for your payment.</CardDescription>
+				<CardTitle>Fee Submission</CardTitle>
+				<CardDescription>
+					Enter the details for your fee submission.
+				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 						<FormField
 							control={form.control}
-							name="id"
+							name="total_amount"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Payment ID</FormLabel>
-									<FormControl>
-										<Input placeholder="PAY-123456" {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter a unique identifier for this payment.
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="amount"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Amount</FormLabel>
+									<FormLabel>Total Amount</FormLabel>
 									<FormControl>
 										<div className="relative">
 											<span className="absolute left-3 top-1.5">₹</span>
@@ -119,9 +105,6 @@ export default function PaymentForm() {
 											/>
 										</div>
 									</FormControl>
-									<FormDescription>
-										Enter the payment amount in INR.
-									</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
@@ -129,32 +112,15 @@ export default function PaymentForm() {
 
 						<FormField
 							control={form.control}
-							name="name"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Recipient Name</FormLabel>
-									<FormControl>
-										<Input placeholder="John Doe" {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the name of the payment recipient.
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
-						<FormField
-							control={form.control}
-							name="dateDue"
+							name="submitted_at"
 							render={({ field }) => (
 								<FormItem className="flex flex-col">
-									<FormLabel>Due Date</FormLabel>
+									<FormLabel>Submission Date</FormLabel>
 									<Popover>
 										<PopoverTrigger asChild>
 											<FormControl>
 												<Button
-													variant={"outline"}
+													variant="outline"
 													className={cn(
 														"w-full pl-3 text-left font-normal",
 														!field.value && "text-muted-foreground"
@@ -173,29 +139,23 @@ export default function PaymentForm() {
 												mode="single"
 												selected={field.value}
 												onSelect={field.onChange}
-												disabled={(date) =>
-													date < new Date(new Date().setHours(0, 0, 0, 0))
-												}
 												initialFocus
 											/>
 										</PopoverContent>
 									</Popover>
-									<FormDescription>
-										Select the date when payment is due.
-									</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
 
 						<Button type="submit" className="w-full">
-							Submit Payment
+							Submit Fee
 						</Button>
 					</form>
 				</Form>
 			</CardContent>
 			<CardFooter className="flex justify-between text-sm text-muted-foreground">
-				<p>All payments are processed securely</p>
+				<p>All submissions are securely processed.</p>
 			</CardFooter>
 		</Card>
 	);
