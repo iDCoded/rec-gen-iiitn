@@ -24,28 +24,42 @@ export default function SignupForm() {
 	const onSubmit: SubmitHandler<FormFields> = async (formData) => {
 		const firstName = formData.name.split(" ")[0];
 		const lastName = formData.name.split(" ")[1];
-		const res = await fetch("http://localhost:8000/api/signup/", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				username: formData.email.split("@")[0],
-				email: formData.email,
-				password: formData.password,
-				firstName: firstName ? firstName : "",
-				lastName: lastName ? lastName : "",
-			}),
+		console.table({
+			username: formData.email.split("@")[0],
+			email: formData.email,
+			password: formData.password,
+			first_name: firstName ? firstName : "",
+			last_name: lastName ? lastName : "",
 		});
-		const data = await res.json();
+		try {
+			const res = await fetch(
+				`${import.meta.env.VITE_API_BASE_URL}/api/auth/register/`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: formData.email.split("@")[0],
+						email: formData.email,
+						password: formData.password,
+						first_name: firstName ? firstName : "",
+						last_name: lastName ? lastName : "",
+					}),
+				}
+			);
+			const data = await res.json();
 
-		if (res.ok) {
-			localStorage.setItem("token", data.token);
-		} else {
-			// setError("root", { message: data.detail });
-			// ? Send detailed error message from the backend
-			// ? if user already exists with the given email.
-			setError("root", { message: res.statusText });
+			if (res.ok) {
+				localStorage.setItem("token", data.token);
+			} else {
+				// setError("root", { message: data.detail });
+				// ? Send detailed error message from the backend
+				// ? if user already exists with the given email.
+				setError("root", { message: res.statusText });
+			}
+		} catch (error) {
+			console.error("An error occured while signing up", error);
 		}
 	};
 
