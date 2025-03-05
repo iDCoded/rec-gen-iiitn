@@ -1,27 +1,34 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 export type Transaction = {
-	id: string;
-	no_of_payments: number;
 	transaction_id: number;
-	payment_pic: File;
-	verified: boolean;
-	payment_datetime: Date;
-	Payments_id: number;
-	user_id: number;
+	amount_paid: number;
+	payment_method: string;
+	transaction_reference: string;
+	status: string;
+	transaction_date: Date;
+	submission_id: number;
 };
 
 export const columns: ColumnDef<Transaction>[] = [
 	{
-		accessorKey: "payment_pic.name",
-		header: "Name",
+		accessorKey: "transaction_id",
+		header: "Txn ID",
 	},
 	{
-		accessorKey: "verified",
-		header: "Verified",
+		accessorKey: "amount_paid",
+		header: "Amount Paid",
 	},
 	{
-		accessorKey: "payment_datetime",
-		header: "Payment Date",
+		accessorKey: "payment_method",
+		header: "Payment Method",
+	},
+	{
+		accessorKey: "status",
+		header: "Status",
+	},
+	{
+		accessorKey: "transaction_date",
+		header: "Transaction Date",
 	},
 ];
