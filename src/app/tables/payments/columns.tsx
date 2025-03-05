@@ -1,23 +1,28 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-export type Payment = {
-	id: string;
-	amount: number;
-	name: string;
-	dateDue: Date;
+export type Submission = {
+	submission_id: number;
+	total_amount: number;
+	status: "pending" | "complete" | "incomplete";
+	submitted_at: Date;
+	student_id: number;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Submission>[] = [
 	{
-		accessorKey: "name",
-		header: "Name",
+		accessorKey: "submission_id",
+		header: "submission ID",
 	},
 	{
-		accessorKey: "amount",
-		header: "Amount",
+		accessorKey: "total_amount",
+		header: "Total Amount",
 	},
 	{
-		accessorKey: "dateDue",
-		header: "Due Date",
+		accessorKey: "status",
+		header: "Status",
+	},
+	{
+		accessorKey: "submitted_at",
+		header: "Submitted At",
 	},
 ];
