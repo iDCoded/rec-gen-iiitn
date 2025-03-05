@@ -52,6 +52,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	// Fetch user details from /api/auth/user/
 	async function fetchUser(accessToken: string) {
 		try {
+			setLoading(true);
 			const res = await fetch(
 				`${import.meta.env.VITE_API_BASE_URL}/api/auth/user/`,
 				{
