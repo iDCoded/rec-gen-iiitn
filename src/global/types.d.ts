@@ -8,6 +8,7 @@ interface JWTUser {
 
 interface User {
 	id: number;
+	student_id: number;
 	username: string;
 	first_name: string;
 	last_name: string;
