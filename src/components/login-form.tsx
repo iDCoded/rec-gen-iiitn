@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { cn } from "../lib/utils";
 import { Button } from "../components/ui/button";
 import {
@@ -33,28 +34,32 @@ export function LoginForm({
 	const { login } = useAuth();
 
 	const onSubmit: SubmitHandler<FormFields> = async (formData) => {
-		const res = await fetch(
-			`${import.meta.env.VITE_API_BASE_URL}/api/auth/login/`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					username: formData.email.split("@")[0],
-					// email: formData.email,
-					password: formData.password,
-				}),
-			}
-		);
-		const data = await res.json();
+		try {
+			const res = await fetch(
+				`${import.meta.env.VITE_API_BASE_URL}/api/auth/login/`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						username: formData.email.split("@")[0],
+						// email: formData.email,
+						password: formData.password,
+					}),
+				}
+			);
+			const data = await res.json();
 
-		if (res.ok) {
-			login(data.access, data.refresh);
-			// localStorage.setItem("token", data.token);
-			navigate("/");
-		} else {
-			setError("root", { message: data.detail });
+			if (res.ok) {
+				login(data.access, data.refresh);
+				// localStorage.setItem("token", data.token);
+				navigate("/");
+			} else {
+				setError("root", { message: data.detail });
+			}
+		} catch (error: any) {
+			setError("root", { message: error.message });
 		}
 	};
 
