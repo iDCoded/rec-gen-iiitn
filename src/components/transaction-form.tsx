@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -85,7 +84,7 @@ export default function TransactionForm() {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
-					// Authorization: `Bearer ${token}`,
+					Authorization: `Bearer ${token}`,
 				},
 				body: JSON.stringify(values),
 			});
