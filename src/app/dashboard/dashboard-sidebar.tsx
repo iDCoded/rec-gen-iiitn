@@ -1,4 +1,10 @@
 import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
@@ -9,6 +15,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { ChevronUp, LogOut, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // TODO: Extract sidebar data to parent layout component
@@ -52,7 +59,31 @@ const DashboardSidebar = ({ user }: { user: User }) => {
 						</SidebarMenu>
 					</SidebarGroup>
 				</SidebarContent>
-				<SidebarFooter>{user.first_name}</SidebarFooter>
+				<SidebarFooter>
+					<SidebarMenu>
+						<SidebarMenuItem>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<SidebarMenuButton>
+										<User2 /> {user.first_name}
+										<ChevronUp className="ml-auto" />
+									</SidebarMenuButton>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent
+									side="top"
+									className="w-[--radix-popper-anchor-width]">
+									<DropdownMenuItem>
+										<span>Account</span>
+									</DropdownMenuItem>
+									<DropdownMenuItem>
+										<LogOut />
+										<span>Sign out</span>
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarFooter>
 			</Sidebar>
 		</div>
 	);
