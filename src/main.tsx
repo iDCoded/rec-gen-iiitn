@@ -8,7 +8,7 @@ import LoginPage from "./app/login/page.tsx";
 import DashboardLayout from "./app/dashboard/layout.tsx";
 import AuthProvider from "./context/AuthContext.tsx";
 import NotFound from "./app/notfound/page.tsx";
-import Dashboard from "./app/dashboard/page.tsx";
+import Dashboard from "./app/dashboard/dashboard-page.tsx";
 import PaymentsTable from "./app/tables/payments/page.tsx";
 import TransactionsTable from "./app/tables/transactions/page.tsx";
 import PaymentPage from "./app/submit/payment/page.tsx";
