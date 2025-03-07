@@ -17,10 +17,13 @@ import {
 } from "@/components/ui/sidebar";
 import { ChevronUp, LogOut, User2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 // TODO: Extract sidebar data to parent layout component
 // TODO: Make Sidebar menu button active based on path
 const DashboardSidebar = ({ user }: { user: User }) => {
+	const { logout } = useAuth();
+
 	return (
 		<div>
 			<Sidebar variant="floating">
@@ -72,10 +75,7 @@ const DashboardSidebar = ({ user }: { user: User }) => {
 								<DropdownMenuContent
 									side="top"
 									className="w-[--radix-popper-anchor-width]">
-									<DropdownMenuItem>
-										<span>Account</span>
-									</DropdownMenuItem>
-									<DropdownMenuItem>
+									<DropdownMenuItem onClick={logout}>
 										<LogOut />
 										<span>Sign out</span>
 									</DropdownMenuItem>
