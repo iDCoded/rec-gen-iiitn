@@ -10,6 +10,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 export type Submission = {
 	submission_id: number;
@@ -31,6 +32,29 @@ export const columns: ColumnDef<Submission>[] = [
 	{
 		accessorKey: "status",
 		header: "Status",
+		cell: ({ row }) => {
+			const { status } = row.original;
+
+			return (
+				<div>
+					{status == "complete" && (
+						<Badge className="bg-blue-500">
+							{status.charAt(0).toUpperCase() + status.slice(1)}
+						</Badge>
+					)}
+					{status == "pending" && (
+						<Badge className="bg-orange-500">
+							{status.charAt(0).toUpperCase() + status.slice(1)}
+						</Badge>
+					)}
+					{status == "incomplete" && (
+						<Badge className="bg-red-500">
+							{status.charAt(0).toUpperCase() + status.slice(1)}
+						</Badge>
+					)}
+				</div>
+			);
+		},
 	},
 	{
 		accessorKey: "submitted_at",

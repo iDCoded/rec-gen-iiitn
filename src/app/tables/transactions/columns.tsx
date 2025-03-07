@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { ColumnDef } from "@tanstack/react-table";
 
 export type Transaction = {
@@ -26,6 +27,29 @@ export const columns: ColumnDef<Transaction>[] = [
 	{
 		accessorKey: "status",
 		header: "Status",
+		cell: ({ row }) => {
+			const { status } = row.original;
+
+			return (
+				<div>
+					{status == "pending" && (
+						<Badge className="bg-orange-500">
+							{status.charAt(0).toUpperCase() + status.slice(1)}
+						</Badge>
+					)}
+					{status == "approved" && (
+						<Badge className="bg-green-500">
+							{status.charAt(0).toUpperCase() + status.slice(1)}
+						</Badge>
+					)}
+					{status == "rejected" && (
+						<Badge className="bg-red-500">
+							{status.charAt(0).toUpperCase() + status.slice(1)}
+						</Badge>
+					)}
+				</div>
+			);
+		},
 	},
 	{
 		accessorKey: "transaction_date",
