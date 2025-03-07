@@ -30,5 +30,15 @@ export const columns: ColumnDef<Transaction>[] = [
 	{
 		accessorKey: "transaction_date",
 		header: "Transaction Date",
+		cell: ({ row }) => {
+			const { transaction_date } = row.original;
+			const formattedDate = new Date(transaction_date).toDateString();
+
+			return (
+				<>
+					<div>{formattedDate}</div>
+				</>
+			);
+		},
 	},
 ];
