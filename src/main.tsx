@@ -13,6 +13,7 @@ import PaymentsTable from "./app/tables/payments/page.tsx";
 import TransactionsTable from "./app/tables/transactions/page.tsx";
 import PaymentPage from "./app/submit/payment/page.tsx";
 import TransactionPage from "./app/submit/transaction/page.tsx";
+import { Toaster } from "@/components/ui/sonner.tsx";
 
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
@@ -31,6 +32,7 @@ createRoot(document.getElementById("root")!).render(
 					<Route path="/*" element={<NotFound />} />
 				</Routes>
 			</BrowserRouter>
+			<Toaster />
 		</AuthProvider>
 	</StrictMode>
 );
