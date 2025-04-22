@@ -11,6 +11,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 export type Submission = {
 	submission_id: number;
@@ -87,9 +88,10 @@ export const columns: ColumnDef<Submission>[] = [
 					<DropdownMenuContent align="end">
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						<DropdownMenuItem
-							onClick={() =>
-								navigator.clipboard.writeText(payment.submission_id.toString())
-							}>
+							onClick={() => {
+								navigator.clipboard.writeText(payment.submission_id.toString());
+								toast.success("Copied to clipboard.");
+							}}>
 							Copy payment ID
 						</DropdownMenuItem>
 						<DropdownMenuSeparator />

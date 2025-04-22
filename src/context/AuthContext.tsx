@@ -8,6 +8,7 @@ import {
 	useContext,
 } from "react";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "sonner";
 
 interface AuthContextType {
 	user: User | null;
@@ -89,6 +90,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		setToken(null);
 		setUser(null);
 		setLoading(false);
+
+		toast.success("You have been logged out.");
 	}
 
 	// Refresh token function
