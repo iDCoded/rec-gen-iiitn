@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Building2 } from "lucide-react";
+import { Building2, AlertCircle } from "lucide-react";
 import { useId } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Card, CardContent, CardHeader } from "./ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 type FormFields = {
 	name: string;
@@ -65,15 +66,26 @@ export default function SignupForm() {
 
 	return (
 		<div className="flex flex-col gap-6">
-			<Card>
+			<Alert
+				// variant="warning"
+				className="mb-4 border-amber-500 bg-amber-50 text-amber-800">
+				<AlertCircle className="h-4 w-4" />
+				<AlertTitle>Prototype Form</AlertTitle>
+				<AlertDescription>
+					This registration form is currently a prototype. The final
+					implementation with complete functionality will be available soon.
+				</AlertDescription>
+			</Alert>
+
+			<Card className="shadow-md">
 				<CardHeader>
-					<div className="flex flex-col items-center gap-2">
+					<div className="flex flex-col items-center gap-3">
 						<div
-							className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border"
+							className="flex size-12 shrink-0 items-center justify-center rounded-full border border-border bg-primary/10"
 							aria-hidden="true">
-							<Building2 />
+							<Building2 className="h-6 w-6 text-primary" />
 						</div>
-						<p className="sm:text-center">Sign up IIIT Nagpur</p>
+						<p className="text-lg font-semibold">Sign up - IIIT Nagpur</p>
 						<p className="sm:text-center text-muted-foreground">
 							We just need a few details to get you started.
 						</p>
@@ -84,10 +96,13 @@ export default function SignupForm() {
 					<form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
 						<div className="space-y-4">
 							<div className="space-y-2">
-								<Label htmlFor={`${id}-name`}>Full name</Label>
+								<Label htmlFor={`${id}-name`} className="font-medium">
+									Full name
+								</Label>
 								<Input
 									id={`${id}-name`}
 									placeholder="Dhruv Anand"
+									className="rounded-md h-10"
 									{...register("name", { required: "Name is required" })}
 									type="text"
 								/>
@@ -98,10 +113,13 @@ export default function SignupForm() {
 								)}
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor={`${id}-email`}>Email</Label>
+								<Label htmlFor={`${id}-email`} className="font-medium">
+									Email
+								</Label>
 								<Input
 									id={`${id}-email`}
 									placeholder="hi@iiitn.ac.in"
+									className="rounded-md h-10"
 									{...register("email", { required: "Email is required" })}
 									type="email"
 								/>
@@ -112,10 +130,13 @@ export default function SignupForm() {
 								)}
 							</div>
 							<div className="space-y-2">
-								<Label htmlFor={`${id}-password`}>Password</Label>
+								<Label htmlFor={`${id}-password`} className="font-medium">
+									Password
+								</Label>
 								<Input
 									id={`${id}-password`}
 									placeholder="Enter your password"
+									className="rounded-md h-10"
 									{...register("password", {
 										required: "Password is required",
 										minLength: {
@@ -132,15 +153,22 @@ export default function SignupForm() {
 								)}
 							</div>
 						</div>
-						<Button type="submit" disabled={isSubmitting} className="w-full">
-							{isSubmitting ? "Loading..." : "Submit"}
+						<Button
+							type="submit"
+							disabled={isSubmitting}
+							className="w-full h-10 rounded-md font-medium">
+							{isSubmitting ? "Creating account..." : "Create account"}
 						</Button>
 						{errors.root && (
-							<div className="text-red-600 text-xs">{errors.root.message}</div>
+							<div className="text-red-600 text-xs p-2 bg-red-50 rounded border border-red-200">
+								{errors.root.message}
+							</div>
 						)}
 						<div className="text-center text-sm">
 							Already have an account?{" "}
-							<a href="/login" className="underline underline-offset-4">
+							<a
+								href="/login"
+								className="text-primary font-medium hover:underline underline-offset-4">
 								Login
 							</a>
 						</div>
@@ -149,8 +177,8 @@ export default function SignupForm() {
 
 				<p className="text-center text-xs text-muted-foreground pb-6">
 					By signing up you agree to our{" "}
-					<a className="underline hover:no-underline" href="#">
-						Terms
+					<a className="text-primary underline hover:no-underline" href="#">
+						Terms of Service
 					</a>
 					.
 				</p>
