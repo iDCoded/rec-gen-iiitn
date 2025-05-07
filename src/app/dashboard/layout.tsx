@@ -14,8 +14,8 @@ export default function DashboardLayout() {
 		id: 0,
 		student_id: 1,
 		username: "bt24csh023",
-		first_name: "John",
-		last_name: "Doe",
+		first_name: "Dhruv",
+		last_name: "-",
 		email: "bt24csh023@iiitn.ac.in",
 	};
 
