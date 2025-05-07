@@ -1,12 +1,9 @@
-// import { useOutletContext } from "react-router-dom";
-
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 export default function Dashboard() {
-	// const { user } = useOutletContext<{ user: User }>();
 	return (
-		<div>
+		<div className="space-y-6 w-full max-w-3xl">
 			<ul className="text-center grid gap-2 grid-flow-col">
 				<li>
 					<Button asChild>

@@ -11,10 +11,24 @@ import { DataTable as PaymentsDataTable } from "../tables/payments/data-table";
 import { DataTable as TransactionsDataTable } from "../tables/transactions/data-table";
 import { columns as PaymentsColumns } from "../tables/payments/columns";
 import { columns as TransactionsColumns } from "../tables/transactions/columns";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function Dashboard() {
+	const isDemoMode = true; // Set to true for presentation mode
+
 	return (
 		<div className="flex flex-col gap-6">
+			{isDemoMode && (
+				<Alert variant="destructive">
+					<AlertCircle className="h-4 w-4" />
+					<AlertTitle>Presentation Mode</AlertTitle>
+					<AlertDescription>
+						Authentication is currently bypassed for demonstration purposes. No
+						actual data is being accessed.
+					</AlertDescription>
+				</Alert>
+			)}
+
 			<h1 className="text-3xl font-bold">Dashboard</h1>
 
 			<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

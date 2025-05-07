@@ -1,38 +1,56 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import DashboardSidebar from "./dashboard-sidebar";
 
 export default function DashboardLayout() {
-	const { user, loading } = useAuth();
+	const { user: authUser, loading } = useAuth();
 	const navigate = useNavigate();
+	const [isDemoMode] = useState(true); // Set to true for presentation mode
+
+	// Mock user data for presentation
+	const mockUser: User = {
+		id: 0,
+		student_id: 1,
+		username: "bt24csh023",
+		first_name: "John",
+		last_name: "Doe",
+		email: "bt24csh023@iiitn.ac.in",
+	};
+
+	// Use either the authenticated user or the mock user
+	const user = isDemoMode ? mockUser : authUser;
 
 	useEffect(() => {
-		// Only redirect if loading is complete and user is still null.
-		if (!loading && !user) {
+		// Only redirect if not in demo mode, loading is complete, and user is null
+		if (!isDemoMode && !loading && !authUser) {
 			navigate("/login");
 		}
-	}, [user, loading, navigate]);
+	}, [authUser, loading, navigate, isDemoMode]);
 
-	if (loading) {
-		// Optionally, display a loading spinner or message.
+	if (loading && !isDemoMode) {
 		return <div>Loading...</div>; // TODO: Make a loading screen.
 	}
 
-	if (!user) {
+	// Only check for null user if not in demo mode
+	if (!user && !isDemoMode) {
 		return null;
 	}
 
 	return (
-		<SidebarProvider>
-			<div className="flex min-h-screen">
-				<DashboardSidebar user={user} />
-				<SidebarTrigger />
-				<div className="flex-1 flex justify-center items-center p-4 w-[80vw]">
-					<Outlet context={{ user }} /> {/* Pass user object as context */}
+		<div className="min-h-screen">
+			<SidebarProvider>
+				<div className="flex flex-col min-h-screen">
+					<div className="flex flex-1">
+						{user && <DashboardSidebar user={user} />}
+						<SidebarTrigger />
+						<div className="flex-1 flex justify-center items-center p-4 w-[80vw]">
+							<Outlet context={{ user }} /> {/* Pass user object as context */}
+						</div>
+					</div>
 				</div>
-			</div>
-		</SidebarProvider>
+			</SidebarProvider>
+		</div>
 	);
 }
